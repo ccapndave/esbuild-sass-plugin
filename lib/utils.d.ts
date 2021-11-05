@@ -1,8 +1,8 @@
-import { SassPluginOptions, Type } from "./index";
+import { Type } from "./index";
 import { AcceptedPlugin } from "postcss";
 import PostcssModulesPlugin from "postcss-modules";
 import { OnLoadResult } from "esbuild";
-export declare function loadSass({ implementation: module, includePaths }: SassPluginOptions): any;
+export declare function requireModule(module: string, includePaths: string[] | undefined): any;
 export declare function makeModule(contents: string, type: Type): string;
 export declare type PostcssModulesParams = Parameters<PostcssModulesPlugin>[0] & {
     basedir?: string;

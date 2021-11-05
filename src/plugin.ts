@@ -3,8 +3,8 @@ import {promises as fsp, readFileSync, Stats} from "fs";
 import {dirname, resolve} from "path";
 import picomatch from "picomatch";
 import {CachedResult, SassPluginOptions, Type} from "./index";
-import {loadSass, makeModule} from "./utils";
-import {createSassImporter} from "./importer";
+import {makeModule} from "./utils";
+import {useSass} from "./useSass";
 
 let pluginIndex: number = 0;
 
@@ -20,8 +20,6 @@ export function sassPlugin(options: SassPluginOptions = {}): Plugin {
     if (!options.picomatch) {
         options.picomatch = {unixify: true};
     }
-
-    const sass = loadSass(options);
 
     const type: Type = typeof options.type === "string" ? options.type : "css";
 
@@ -67,9 +65,9 @@ export function sassPlugin(options: SassPluginOptions = {}): Plugin {
             resolveDir = dirname(importer);
         }
 
-        const mapper = options.importMapper
-        if(mapper) {
-            path = mapper(path)
+        const mapper = options.importMapper;
+        if (mapper) {
+            path = mapper(path);
         }
 
         const paths = options.includePaths ? [resolveDir, ...options.includePaths] : [resolveDir];
@@ -80,20 +78,7 @@ export function sassPlugin(options: SassPluginOptions = {}): Plugin {
         return {css: readFileSync(path, "utf-8"), watchFiles: [path]};
     }
 
-    const importer = createSassImporter(options);
-
-    function renderSync(file) {
-        const {
-            css,
-            stats: {
-                includedFiles
-            }
-        } = sass.renderSync({importer, ...options, file});
-        return {
-            css: css.toString("utf-8"),
-            watchFiles: includedFiles
-        };
-    }
+    const renderAsync = useSass(options);
 
     const cache = !options.cache
         ? null
@@ -186,7 +171,7 @@ export function sassPlugin(options: SassPluginOptions = {}): Plugin {
 
             async function transform(path: string, type: Type): Promise<OnLoadResult> {
                 try {
-                    let {css, watchFiles} = path.endsWith(".css") ? readCssFileSync(path) : renderSync(path);
+                    let {css, watchFiles} = path.endsWith(".css") ? readCssFileSync(path) : await renderAsync(path);
 
                     watchFiles = [...watchFiles];
                     if (lastWatchFiles) {
@@ -218,7 +203,7 @@ export function sassPlugin(options: SassPluginOptions = {}): Plugin {
                         resolveDir: dirname(path),
                         watchFiles
                     };
-                } catch (err:any) {
+                } catch (err: any) {
                     return {
                         errors: [{text: err.message}],
                         watchFiles: lastWatchFiles?.[path] ?? [path]

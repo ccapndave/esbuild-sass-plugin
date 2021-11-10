@@ -76,7 +76,7 @@ if (isMainThread) {
             stats: {
                 includedFiles
             }
-        } = sass.renderSync({importer, ...options, file});
+        } = sass.renderSync({...options, importer, file});
         parentPort.postMessage({css, includedFiles});
     })
 }

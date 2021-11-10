@@ -35,7 +35,7 @@ export type SassPluginOptions = {
      *
      * @default css files will be passed to css loader
      */
-    type?: Type | ([Type] | [Type, string | [string] | [string, string]])[]
+    type?: Type
 
     /**
      * Enable the cache or pass your own Map to recycle its contents although
@@ -147,16 +147,12 @@ export type SassPluginOptions = {
     /**
      *
      */
-    quietDeps?: boolean
+    quietDeps?: boolean;
 }
 
 
 export type CachedResult = {
-
-    type: Type
-
     mtimeMs: number
-
     result: OnLoadResult
 };
 

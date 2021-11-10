@@ -9,7 +9,7 @@ export declare type SassPluginOptions = {
     };
     implementation?: string;
     basedir?: string;
-    type?: Type | ([Type] | [Type, string | [string] | [string, string]])[];
+    type?: Type;
     cache?: Map<string, Map<string, CachedResult>> | boolean;
     picomatch?: any;
     importer?: Importer | Importer[];
@@ -30,7 +30,6 @@ export declare type SassPluginOptions = {
     quietDeps?: boolean;
 };
 export declare type CachedResult = {
-    type: Type;
     mtimeMs: number;
     result: OnLoadResult;
 };

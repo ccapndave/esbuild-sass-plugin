@@ -4,12 +4,13 @@ const {sassPlugin} = require("../../../lib");
 esbuild
     .build({
         entryPoints: ["index.js"],
+        outdir: "./out",
         bundle: true,
         plugins: [
             sassPlugin({
                 importer(url) {
-                    if (url === "$env") {
-                        return {content: `$color: ${"blue"}`}
+                    if (url === "..") {
+                        return {contents: `/* $env!!! */\n$color: ${"blue"};\n`}
                     }
                     return null;
                 }

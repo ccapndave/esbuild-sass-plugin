@@ -1,5 +1,5 @@
-@import "$env";
+@import "..";
 
 body {
-  color: red;
+  color: $color;
 }

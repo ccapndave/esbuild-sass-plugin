@@ -20,10 +20,10 @@ if (isMainThread) {
         ];
 
         function createWorker() {
-            const worker = new Worker(__filename, {workerData: options});
+            const worker = new Worker(__filename, {workerData: {...options, importer: options.importer?.toString()}});
             worker.on("message", ({css, includedFiles}) => {
                 worker.resolve({
-                    css: css.toString(),
+                    css: Buffer.from(css).toString(),
                     watchFiles: includedFiles
                 });
                 workers.push(worker);
